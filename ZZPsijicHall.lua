@@ -33,24 +33,12 @@ function ZZPsijicHall.ScanNow()
     local loop_limit   = 1000 -- avoid infinite loops in case GNPHFI() surprises us
     while furniture_id and 0 < loop_limit do
         local item = Item:FromFurnitureId(furniture_id)
-        local store = item:ToStorage()
         if ZZPsijicHall.IsInteresting(item) then
-            table.insert(save_furniture, store)
-            table.insert(flat_furniture, item:ToTextLine())
-            unique_id_to_item[Id64ToString(item.unique_id)] = item
-        end
-        seen_ct = seen_ct + 1
 
+        end
         furniture_id = GetNextPlacedHousingFurnitureId(furniture_id)
         loop_limit = loop_limit - 1
     end
-
-    ZZPsijicHall.unique_id_to_item              = unique_id_to_item
-    ZZPsijicHall.savedVariables.get             = save_furniture
-    ZZPsijicHall.savedVariables.get_flat        = flat_furniture
-
-    d("ZZPsijicHall seen:"..tostring(seen_ct)
-            .."  saved:"..tostring(#save_furniture))
 end
 
 function ZZPsijicHall.IsInteresting(item)

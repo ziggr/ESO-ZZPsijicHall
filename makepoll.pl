@@ -19,6 +19,10 @@ sub dirls($)
 @files = ( 'Makefile' );
 # push @files, dirls('src');
 push @files, 'ZZPsijicHall.lua';
+push @files, 'ZZPsijicHall.lua';
+push @files, 'ZZPsijicHall_Coord.lua';
+push @files, 'ZZPsijicHall_Log.lua';
+push @files, 'ZZPsijicHall_Item.lua';
 print join("\n", @files) . "\n";
 
 @prev_mtime = ();

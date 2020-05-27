@@ -2,6 +2,9 @@ local ZZPsijicHall = _G["ZZPsijicHall"]
 ZZPsijicHall.Item = {}
 local Item = ZZPsijicHall.Item
 
+local Cartesian = ZZPsijicHall.Cartesian
+local Polar     = ZZPsijicHall.Polar
+
 function Item:FromFurnitureId(furniture_id)
     local o = { furniture_id = furniture_id }
 
@@ -13,12 +16,12 @@ end
 -- GetPlacedHousingFurnitureInfo ---------------------------------------------
 
 function Item:LazyGetPlacedHousingFurnitureInfo()
-    if not self.item_name then
-        local r = { GetPlacedHousingFurnitureInfo(self.furniture_id) }
-        self.item_name             = r[1]
-        self.texture_name          = r[2]
-        self.furniture_data_id     = r[3]
-    end
+    if self.item_name then return end
+
+    local r = { GetPlacedHousingFurnitureInfo(self.furniture_id) }
+    self.item_name             = r[1]
+    self.texture_name          = r[2]
+    self.furniture_data_id     = r[3]
 end
 
 function Item:ItemName()
@@ -34,18 +37,22 @@ end
 -- HousingEditorGetFuritureWorldPosition -------------------------------------
 
 function Item:LazyHousingEditorGetFurnitureWorldPosition()
-    if not self.x then
+    if self.x then return end
+
     r = { HousingEditorGetFurnitureWorldPosition(self.furniture_id) }
-    self.cartesian.x = r[1]
-    self.cartesian.y = r[2]
-    self.cartesian.z = r[3]
+    self.x = r[1]
+    self.y = r[2]
+    self.z = r[3]
 
     r = { HousingEditorGetFurnitureOrientation(self.furniture_id) }
-    self.rotation = r[2] / math.pi * 180
+    self.rotation_rads = r[2]
 end
 
 function Item:CartesianCoords()
-    Item:LazyHousingEditorGetFurnitureWorldPosition()
+    if not self.cartesian then
+        Item:LazyHousingEditorGetFurnitureWorldPosition()
+        self.cartesian = Cartesian:New(self.x, self.z)
+    end
     return self.cartesian
 end
 
@@ -54,7 +61,8 @@ function Item:PolarCoords(origin)
         local dx = origin.x - self:Cartesian().x
         local dz = origin.z - self:Cartesian().z
         local r  = math.sqrt(dx*dx + dz+dz)
-        local
+        local theta_rads = math.atan2(dz, dx)
+        local theta_degs = ZZPsijicHall.rad2deg()
     end
     return self.polar
 end

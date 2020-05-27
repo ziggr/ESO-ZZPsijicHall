@@ -11,7 +11,13 @@ getpts:
 	-cp -f /Volumes/Elder\ Scrolls\ Online/pts/SavedVariables/LibDebugLogger.lua data/
 
 put:
-	cp -f ./ZZPsijicHall.txt      /Volumes/Elder\ Scrolls\ Online/live/AddOns/ZZPsijicHall/
-	cp -f ./ZZPsijicHall.lua      /Volumes/Elder\ Scrolls\ Online/live/AddOns/ZZPsijicHall/
-
+	rsync -vrt --delete --exclude=.git \
+	--exclude=data \
+	--exclude=doc \
+	--exclude=test \
+	--exclude=trig \
+	--exclude=published \
+	--exclude=tool \
+	--exclude=scratch.lua \
+	. /Volumes/Elder\ Scrolls\ Online/live/AddOns/ZZPsijicHall
 
