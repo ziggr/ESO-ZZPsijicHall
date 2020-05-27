@@ -1,0 +1,12 @@
+## Title: ZZPsijicHall
+## Description: Automatic layout of crafting stations
+## AddOnVersion: 601
+## Author: ziggr
+## APIVersion: 100031
+## SavedVariables: ZZPsijicHallVariables
+## DependsOn: LibDebugLogger LibSlashCommander
+
+ZZPsijicHall_Define.lua
+ZZPsijicHall.lua
+ZZPsijicHall_Log.lua
+ZZPsijicHall_Item.lua
