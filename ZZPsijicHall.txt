@@ -3,10 +3,11 @@
 ## AddOnVersion: 601
 ## Author: ziggr
 ## APIVersion: 100031
-## SavedVariables: ZZPsijicHallVariables
+## SavedVariables: ZZPsijicHallVars
 ## DependsOn: LibDebugLogger LibSlashCommander
 
 ZZPsijicHall_Define.lua
-ZZPsijicHall.lua
 ZZPsijicHall_Log.lua
+ZZPsijicHall_Coord.lua
 ZZPsijicHall_Item.lua
+ZZPsijicHall.lua

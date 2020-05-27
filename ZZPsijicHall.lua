@@ -1,8 +1,10 @@
-ZZPsijicHall = ZZPsijicHall or {}
-ZZPsijicHall.name            = "ZZPsijicHall"
-ZZPsijicHall.savedVarVersion = 1
-ZZPsijicHall.default = {
-}
+local ZZPsijicHall      = _G["ZZPsijicHall"]
+ZZPsijicHall.name       = "ZZPsijicHall"
+ZZPsijicHall.saved_var_version = 2
+ZZPsijicHall.default    = {}
+
+local Item = ZZPsijicHall.Item
+local Item = ZZPsijicHall.Log
 
 function ZZPsijicHall.ErrorIfNotHome()
     local okay = {
@@ -25,20 +27,28 @@ end
 function ZZPsijicHall.ScanNow()
     if ZZPsijicHall.ErrorIfNotHome() then return end
 
-    local save_furniture    = {}
-    local flat_furniture    = {}
-    local unique_id_to_item = {}
-    local seen_ct           = 0
-    local furniture_id = GetNextPlacedHousingFurnitureId(nil)
-    local loop_limit   = 1000 -- avoid infinite loops in case GNPHFI() surprises us
+    local furn_list     = {}
+    local furn_list_out = {}
+    local seen_ct       = 0
+    local furniture_id  = GetNextPlacedHousingFurnitureId(nil)
+    local loop_limit    = 1000 -- avoid infinite loops in case GNPHFI() surprises us
     while furniture_id and 0 < loop_limit do
-        local item = Item:FromFurnitureId(furniture_id)
+        local item      = ZZPsijicHall.Item:FromFurnitureId(furniture_id)
         if ZZPsijicHall.IsInteresting(item) then
-
+            table.insert(furn_list, item)
+            table.insert(furn_list_out, item:ToStorage())
         end
-        furniture_id = GetNextPlacedHousingFurnitureId(furniture_id)
-        loop_limit = loop_limit - 1
+        furniture_id    = GetNextPlacedHousingFurnitureId(furniture_id)
+        loop_limit      = loop_limit - 1
+        seen_ct         = seen_ct + 1
     end
+
+    ZZPsijicHall.furn_list                = furn_list
+    ZZPsijicHall.saved_vars.furn_list_out = furn_list_out
+    ZZPsijicHall.Log.Info(
+              "Scanning done. %d furnishings scanned, %d interesting ones."
+            , seen_ct
+            , #furn_list )
 end
 
 function ZZPsijicHall.IsInteresting(item)
@@ -46,12 +56,12 @@ function ZZPsijicHall.IsInteresting(item)
                  , "Blacksmithing Station"
                  , "Clothing Station"
                  , "Woodworking Station"
-                 , "Breton Sconce, Torch"
-                 , "Common Lantern, Hanging"
-                 , "Alinor Platform, Ballroom Timeworn"
+                 -- , "Breton Sconce, Torch"
+                 -- , "Common Lantern, Hanging"
+                 , "Alinor Floor, Ballroom Timeworn"
                  }
     for _, s in ipairs(want) do
-        if string.find(item.item_name, s) then return true end
+        if string.find(item:ItemName(), s) then return true end
     end
     return false
 end
@@ -278,8 +288,29 @@ function ZZPsijicHall.MoveDone()
     for _,item in ipairs(moved) do
         table.insert(moved_flat, item:ToTextLine())
     end
-    ZZPsijicHall.savedVariables.unmoved = unmoved_flat
-    ZZPsijicHall.savedVariables.moved   = moved_flat
+    ZZPsijicHall.saved_vars.unmoved = unmoved_flat
+    ZZPsijicHall.saved_vars.moved   = moved_flat
+end
+
+
+-- Slash Commands ------------------------------------------------------------
+
+function ZZPsijicHall.RegisterSlashCommands()
+    local lsc = LibSlashCommander
+    local cmd = lsc:Register( "/ps"
+                            , function(arg) ZZPsijicHall.SlashCommand(arg) end
+                            , "Zig's Psijic Manor tools")
+
+    local sub_scan = cmd:RegisterSubCommand()
+    sub_scan:AddAlias("scan")
+    sub_scan:SetCallback(function() ZZPsijicHall.SlashCommand("scan") end)
+    sub_scan:SetDescription("scan furnishings for crafting stations and platforms")
+end
+
+function ZZPsijicHall.SlashCommand(arg1)
+    if arg1:lower() == "scan" then
+        ZZPsijicHall.ScanNow()
+    end
 end
 
 -- Init ----------------------------------------------------------------------
@@ -291,12 +322,14 @@ end
 
 function ZZPsijicHall:Initialize()
 
-    self.savedVariables = ZO_SavedVars:NewAccountWide(
+    self.saved_vars = ZO_SavedVars:NewAccountWide(
                               "ZZPsijicHallVars"
-                            , self.savedVarVersion
+                            , self.saved_var_version
                             , nil
                             , self.default
                             )
+
+    self.RegisterSlashCommands()
 end
 
 -- Postamble -----------------------------------------------------------------
@@ -305,6 +338,3 @@ EVENT_MANAGER:RegisterForEvent( ZZPsijicHall.name
                               , EVENT_ADD_ON_LOADED
                               , ZZPsijicHall.OnAddOnLoaded
                               )
-
-SLASH_COMMANDS["/clayget"] = ZZPsijicHall.ScanNow
-SLASH_COMMANDS["/clayset"] = ZZPsijicHall.MoveAll2

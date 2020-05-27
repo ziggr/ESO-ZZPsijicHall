@@ -66,3 +66,26 @@ function Item:PolarCoords(origin)
     end
     return self.polar
 end
+
+-- Writing to output ---------------------------------------------------------
+--
+-- Lossy. Just dumping to savedvariables so that I can do math later.
+--
+function Item:ToStorage()
+    local function sint(i) return string.format("%d", i) end
+    local function sflo(f) return string.format("%5.2f", f) end
+
+    self:CartesianCoords() -- lazy fetch coords/rotation
+    local rotation_degs = ZZPsijicHall.rad2deg(self.rotation_rads)
+    rotation_degs = ZZPsijicHall.round(rotation_degs)
+
+    local store = {
+          Id64ToString(self:FurnitureDataId())
+        , sint(self.x)
+        , sint(self.z)
+        , sint(self.y)
+        , sint(rotation_degs)
+        , self:ItemName()
+    }
+    return table.concat(store, " ")
+end
