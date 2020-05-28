@@ -9,7 +9,13 @@ function ZZPsijicHall.deg2rad(deg)
 end
 
 function ZZPsijicHall.rad2deg(rad)
-    return rad * 180 / math.pi
+    local n = rad * 180 / math.pi
+    if n < 0 then
+        n = -( -n % 360 ) + 360
+    else
+        n = n % 360
+    end
+    return n
 end
 
 function ZZPsijicHall.round(x, to_what)
