@@ -37,7 +37,7 @@ function ZZPsijicHall.CartesianToPolar( x, z, origin_x, origin_z )
     local dz            = z - origin_z
     local radius        = math.sqrt(dx^2 + dz^2)
     local theta_rads    = math.atan2(dz, dx)
-    return { radius = r, theta_rads = theta_rads }
+    return { radius = radius, theta_rads = theta_rads }
 end
 
 function ZZPsijicHall.PolarToCartesian( radius, theta_rads, origin_x, origin_z )
@@ -53,8 +53,8 @@ end
 
 -- Polar ---------------------------------------------------------------------
 
-function Polar:New(r, theta_rads)
-    local o = { r = r, theta_rads = theta_rads}
+function Polar:New(radius, theta_rads)
+    local o = { radius = radius, theta_rads = theta_rads}
 
     setmetatable(o, self)
     self.__index = self
@@ -65,13 +65,16 @@ function Polar:FromCartesian(cartesian, origin)
     local p = ZZPsijicHall.CartesianToPolar(
                                   cartesian.x
                                 , cartesian.z
-                                , origin_x
-                                , origin_z
+                                , origin.x
+                                , origin.z
                                 )
-    return Polar:New(p.r, p.theta_rads)
+    return Polar:New(p.radius, p.theta_rads)
 end
 
-
+function Polar:ToString()
+    local deg = ZZPsijicHall.rad2deg(self.theta_rads)
+    return string.format("θ:%3d r:%d", deg, self.radius)
+end
 
 -- Cartesian -----------------------------------------------------------------
 
@@ -91,4 +94,8 @@ function Cartesian:FromPolar(polar, origin)
                                 , origin.z
                                 )
     return Cartesian:New(c.x, c.z)
+end
+
+function Cartesian:ToString()
+    return string.format("%d,%d", self.x, self.z)
 end

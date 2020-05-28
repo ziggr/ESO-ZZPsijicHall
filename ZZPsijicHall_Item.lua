@@ -7,6 +7,7 @@ local Polar     = ZZPsijicHall.Polar
 
 function Item:FromFurnitureId(furniture_id)
     local o = { furniture_id = furniture_id }
+    o.unique_id = GetItemUniqueIdFromFurnitureId(furniture_id)
 
                         -- Why fuss with lazy-loading cache code?
                         -- For a scan that you run once and then
@@ -66,7 +67,7 @@ function Item:ToStorage()
     rotation_degs = ZZPsijicHall.round(rotation_degs)
 
     local store = {
-          Id64ToString(self:FurnitureDataId())
+          Id64ToString(self.furniture_id)
         , sint(self.x)
         , sint(self.z)
         , sint(self.y)

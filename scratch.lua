@@ -1,46 +1,39 @@
-function deg2rad(deg)
-    return deg * math.pi / 180
-end
+dofile("ZZPsijicHall_Define.lua")
+dofile("ZZPsijicHall_Coord.lua")
+dofile("ZZPsijicHall_Geometry.lua")
 
-function rad2deg(rad)
-    return rad * 180 / math.pi
-end
+local Cartesian = ZZPsijicHall.Cartesian
+local Line      = ZZPsijicHall.Line
+local Polar     = ZZPsijicHall.Polar
 
-function round(x, to_what)
-    to_what = to_what or 10
-    local boosted = x / to_what
-    local trunced = 0
-    if x < 0 then
-        boosted = boosted - 0.5
-        trunced = math.ceil(boosted)
-    else
-        boosted = boosted + 0.5
-        trunced = math.floor(boosted)
+ZZPsijicHall.Line.Test_Intersect()
+
+
+POINTS = {
+  Cartesian:New(82526, 65237)
+, Cartesian:New(82985, 64317)
+, Cartesian:New(83168, 63305)
+, Cartesian:New(83060, 62282)
+, Cartesian:New(82671, 61330)
+, Cartesian:New(81190, 59932)
+, Cartesian:New(82030, 60525)
+, Cartesian:New(80218, 59597)
+}
+
+                        -- Test geometry functions. Are we calculating
+                        -- a useful origin and radius for a circle drawn
+                        -- through our platforms?
+
+local function SectOne(i1,i2,i3,i4)
+    local pt        = { POINTS[i1], POINTS[i2], POINTS[i3], POINTS[i4] }
+    local intersect = Line.Intersect( Line:FromPoints(pt[1], pt[2])
+                                    , Line:FromPoints(pt[3], pt[4]) )
+
+    local origin    = intersect
+    for i,p in ipairs(pt) do
+        local pol = Polar:FromCartesian(p, intersect)
+        print(pol:ToString())
     end
-    return trunced * to_what
 end
 
-local radius = 1.0
-
-for theta_deg = 0,360,5 do
-    local theta_rad = deg2rad(theta_deg)
-
-    local x = math.cos(theta_rad) * radius
-    local y = math.sin(theta_rad) * radius
-
-    local q_rad = math.atan2(y,x)
-    if q_rad < 0 then
-        q_rad = q_rad + 2 * math.pi
-    end
-
-    local q_deg = rad2deg(q_rad)
-
-    local s = string.format("%3d %4.2f  xy %5.2f %5.2f  atan %5.2f %3d"
-                    , theta_deg
-                    , theta_rad
-                    , x
-                    , y
-                    , q_rad
-                    , round(q_deg, 5) )
-    print(s)
-end
+SectOne(1,2,3,4)

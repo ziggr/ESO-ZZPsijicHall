@@ -27,23 +27,26 @@ end
 function ZZPsijicHall.ScanNow()
     if ZZPsijicHall.ErrorIfNotHome() then return end
 
-    local furn_list     = {}
-    local furn_list_out = {}
-    local seen_ct       = 0
-    local furniture_id  = GetNextPlacedHousingFurnitureId(nil)
-    local loop_limit    = 1000 -- avoid infinite loops in case GNPHFI() surprises us
+    local furn_list         = {}
+    local furn_list_out     = {}
+    local seen_ct           = 0
+    local unique_id_to_item = {}
+    local furniture_id      = GetNextPlacedHousingFurnitureId(nil)
+    local loop_limit        = 1000 -- avoid infinite loops in case GNPHFI() surprises us
     while furniture_id and 0 < loop_limit do
-        local item      = ZZPsijicHall.Item:FromFurnitureId(furniture_id)
+        local item          = ZZPsijicHall.Item:FromFurnitureId(furniture_id)
         if ZZPsijicHall.IsInteresting(item) then
             table.insert(furn_list, item)
             table.insert(furn_list_out, item:ToStorage())
+            unique_id_to_item[item.unique_id] = item
         end
-        furniture_id    = GetNextPlacedHousingFurnitureId(furniture_id)
-        loop_limit      = loop_limit - 1
-        seen_ct         = seen_ct + 1
+        furniture_id        = GetNextPlacedHousingFurnitureId(furniture_id)
+        loop_limit          = loop_limit - 1
+        seen_ct             = seen_ct + 1
     end
 
     ZZPsijicHall.furn_list                = furn_list
+    ZZPsijicHall.unique_id_to_item        = unique_id_to_item
     ZZPsijicHall.saved_vars.furn_list_out = furn_list_out
     ZZPsijicHall.Log.Info(
               "Scanning done. %d furnishings scanned, %d interesting ones."
