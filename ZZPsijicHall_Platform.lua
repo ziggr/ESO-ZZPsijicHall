@@ -29,6 +29,7 @@ function ZZPsijicHall.CalcPlatforms()
     local round      = ZZPsijicHall.round    -- for less typing
     local move_list  = {}
     local want_ct    = 8 -- how many platforms in this arc?
+    local want_y     = 10617
     local origin     = Cartesian:New(79536, 63171)   -- cm
     local radius     = 3633      -- cm
     local arc_begin  = 35        -- degrees
@@ -36,20 +37,28 @@ function ZZPsijicHall.CalcPlatforms()
     local rot_offset = 0
     local step       = (arc_end - arc_begin) / (want_ct - 1)
 
+                        -- Raise/lower overlapping platforms to reduce
+                        -- z-fighting flicker.
+    local z_fight    = 0
+    local function next_z_fight(z_fight)
+        if z_fight == 0 then return 1 else return 0 end
+    end
+
     for theta = arc_begin, arc_end, step do
         local dx  = math.cos(deg2rad(theta)) * radius
         local dz  = math.sin(deg2rad(theta)) * radius
         local rot = theta + rot_offset
-
+        z_fight = next_z_fight(z_fight)
         local item = table.remove(item_list)
         if not item then
             Log.Error("Not enough platforms.")
             return nil
         end
 
-        item.want = Cartesian:New( round(origin.x + dx)
-                                 , round(origin.z + dz))
-        item.want.rotation_rads = ZZPsijicHall.deg2rad(theta + rot_offset)
+        item.want               = Cartesian:New( round(origin.x + dx)
+                                               , round(origin.z + dz) )
+        item.want.y             = want_y + z_fight
+        item.want.rotation_rads = ZZPsijicHall.deg2rad(90 - theta + rot_offset)
         table.insert(move_list, item)
     end
 

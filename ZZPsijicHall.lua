@@ -73,6 +73,32 @@ end
 
 -- move furniture ------------------------------------------------------------
 
+function ZZPsijicHall.MoveList(move_list)
+    for _, item in ipairs(move_list) do
+        ZZPsijicHall.MaybeMove(item)
+    end
+end
+
+-- close enough, don't waste time moving.
+local function equ(a,b)
+    return math.abs(a-b) < ZZPsijicHall.deg2rad(2)
+end
+
+function ZZPsijicHall.MaybeMove(item)
+    if          (item.x == item.want.x)
+            and (item.z == item.want.z)
+            and (item.y == item.want.y)
+            and (   (not ZZPsijicHall.force_rotation)
+                 or equ(item.rotation_rads, item.want.rotation_rads)) then
+        Log.Info( "Skipping: already in position x:%d,z:%d  %s|r"
+                , item.x
+                , item.z
+                , item:ItemName())
+        return
+    end
+    ZZPsijicHall.MoveItem(item)
+end
+
 local HR = {
   [HOUSING_REQUEST_RESULT_ALREADY_APPLYING_TEMPLATE           ] = "ALREADY_APPLYING_TEMPLATE"
 , [HOUSING_REQUEST_RESULT_ALREADY_BEING_MOVED                 ] = "ALREADY_BEING_MOVED"
@@ -109,6 +135,22 @@ local HR = {
 , [HOUSING_REQUEST_RESULT_UNKNOWN_FAILURE                     ] = "UNKNOWN_FAILURE"
 }
 
+function ZZPsijicHall.MoveItem(item)
+    local r = HousingEditorRequestChangePositionAndOrientation(
+                      item.furniture_id
+                    , item.want.x
+                    , item.want.y
+                    , item.want.z
+                    , 0        -- pitch
+                    , (item.want.rotation_rads or 0)
+                    , 0        -- roll
+                    )
+    item.moved = { code      = r
+                 , code_text = HR[r] or tostring(r)
+                 }
+end
+
+
 -- from http://lua-users.org/wiki/SplitJoin
 local function split(str,pat)
   local tbl={}
@@ -129,10 +171,6 @@ local function next_moved_index()
     return MOVED_INDEX
 end
 
--- close enough, don't waste time moving.
-local function equ(a,b)
-    return math.abs(a-b) < 2
-end
 
 function ZZPsijicHall.MaybeMoveOne2(args)
     local item = ZZPsijicHall.unique_id_to_item[args.unique_id]
@@ -323,8 +361,8 @@ function ZZPsijicHall.SlashCommand(arg1)
     elseif arg1:lower() == "plat" then
         ZZPsijicHall.ScanNow()
         local move_list = ZZPsijicHall.CalcPlatforms()
-        ZZPsijicHall.zz = { move_list = move_list }
-        -- ZZPsijicHall.MoveList(move_list)
+        ZZPsijicHall.zz = { platforms = move_list }
+        ZZPsijicHall.MoveList(move_list)
     end
 end
 
