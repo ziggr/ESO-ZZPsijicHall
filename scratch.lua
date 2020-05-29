@@ -6,7 +6,11 @@ local Cartesian = ZZPsijicHall.Cartesian
 local Line      = ZZPsijicHall.Line
 local Polar     = ZZPsijicHall.Polar
 
-ZZPsijicHall.Line.Test_Intersect()
+-- ZZPsijicHall.Line.Test_Intersect()
+
+-- Origin for current platform arc:
+-- origin: 79536,63171
+-- radius: 3633
 
 
 POINTS = {
@@ -26,13 +30,14 @@ POINTS = {
 
 local function SectOne(i1,i2,i3,i4)
     local pt        = { POINTS[i1], POINTS[i2], POINTS[i3], POINTS[i4] }
-    local intersect = Line.Intersect( Line:FromPoints(pt[1], pt[2])
-                                    , Line:FromPoints(pt[3], pt[4]) )
+    local intersect = Line.Intersect( Line:Bisect(pt[1], pt[2])
+                                    , Line:Bisect(pt[3], pt[4]) )
 
     local origin    = intersect
+    print(string.format("origin: %s", origin:ToString()))
     for i,p in ipairs(pt) do
         local pol = Polar:FromCartesian(p, intersect)
-        print(pol:ToString())
+        print(string.format("cart:%s polar:%s",p:ToString(), pol:ToString()))
     end
 end
 

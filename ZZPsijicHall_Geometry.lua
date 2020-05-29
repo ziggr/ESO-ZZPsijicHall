@@ -29,11 +29,11 @@ end
 function Line:Bisect(pt1, pt2)
                         -- Find midpoint between two points.
                         -- New bisector line runs through that midpoint.
-    local midpoint      = { x = ( pt1.x + pt2.x ) / 2
-                          , z = ( pt1.z + pt2.z ) / 2 }
+    local midpoint      = Cartesian:New( ( pt1.x + pt2.x ) / 2
+                                       , ( pt1.z + pt2.z ) / 2 )
 
                         -- Slope m is change in z over change in x.
-    local bisect_pt2 = nil
+    local bisect_pt2 = {}
     local dz = pt2.z - pt1.z
     local dx = pt2.x - pt1.x
     if dx == 0 then
@@ -70,7 +70,9 @@ function Line:Bisect(pt1, pt2)
         bisect_pt2.z = b
     end
 
-    return Line:FromPoints(midpoint, bisect_pt2)
+    return Line:FromPoints( midpoint
+                          , Cartesian:New(bisect_pt2.x, bisect_pt2.z)
+                          )
 end
 
 -- AKA "m" in classic "z = mx + b" line formula.
@@ -106,13 +108,13 @@ function Line.Intersect(line1, line2)
                         -- If either line is vertical, plug its x into the
                         -- other line's formula to find the intersection.
     if line1:Slope() == INFINITY then
-        local x = line1.x
+        local x = line1.pt1.x
         local z = line2:Slope() * x + line2:ZIntercept()
         return Cartesian:New(x, z)
     elseif line2:Slope() == INFINITY then
-        local x = line2.x
+        local x = line2.pt1.x
         local z = line1:Slope() * x + line1:ZIntercept()
-        return Cartesian:New(x2, z2)
+        return Cartesian:New(x, z)
     end
 
                         -- Intersect point will have the same z = mx * b
@@ -133,6 +135,17 @@ function Line.Intersect(line1, line2)
     local m2 = line2:Slope()
     local x  = (b2 - b1) / (m1 - m2)
     local z  = m1 * x + b1
+    print(string.format("Line 1: %s  %s  m=%f  b=%f"
+                        , line1.pt1:ToString(), line1.pt2:ToString()
+                        , line1:Slope(), line1:ZIntercept()
+                        ))
+    print(string.format("Line 2: %s  %s  m=%f  b=%f"
+                        , line2.pt1:ToString(), line2.pt2:ToString()
+                        , line2:Slope(), line2:ZIntercept()
+                        ))
+    print(string.format("x:%f =(b2:%f-b1:%f)/(m1:%f-m2:%f)"
+                        , x, b2, b1, m1, m2))
+    print(string.format("z:%f =(m1:%f * x:%f + b1:%f", z, m1, x, b1))
     return Cartesian:New(x, z)
 end
 
