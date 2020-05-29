@@ -9,14 +9,22 @@ local INFINITY = math.huge
 
 -- Line ----------------------------------------------------------------------
 --
--- z = m * x + b
+-- Defined by two points on the line.
+-- We usually treat this line as stretching to infinity, past the above
+-- two points. They're _points_, not _endpoints_.
+--
+-- Originally this was defined by "m" and "b" from the classic geometric
+-- formula for a line:
+--
+--      z = m * x + b
 --
 -- m = slope: z per x
 -- b = z-offset where line crosses z-axis at x=0
 --
--- WARNING: this formula is incapable of expressing a straight vertical line.
-
-
+-- But no, this formula cannot express a straight vertical line.
+-- So back to storing two Cartesian points and live-calculating
+-- m Slope() and b ZIntercept() from those points.
+--
 function Line:FromPoints(pt1, pt2)
     local o = { pt1 = pt1, pt2 = pt2 }
 
@@ -118,7 +126,9 @@ function Line.Intersect(line1, line2)
     end
 
                         -- Intersect point will have the same z = mx * b
-                        -- for both lines, so find the matching x:
+                        -- for both lines.
+                        --
+                        -- First find the matching x:
                         --
                         -- z = m1x + b1  == m2x + b2
                         --
@@ -134,6 +144,8 @@ function Line.Intersect(line1, line2)
     local m1 = line1:Slope()
     local m2 = line2:Slope()
     local x  = (b2 - b1) / (m1 - m2)
+                        -- Now that we have the intersect's x,
+                        -- use that x to find the intersect's z.
     local z  = m1 * x + b1
     print(string.format("Line 1: %s  %s  m=%f  b=%f"
                         , line1.pt1:ToString(), line1.pt2:ToString()

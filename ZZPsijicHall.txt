@@ -10,4 +10,5 @@ ZZPsijicHall_Define.lua
 ZZPsijicHall_Log.lua
 ZZPsijicHall_Coord.lua
 ZZPsijicHall_Item.lua
+ZZPsijicHall_Platform.lua
 ZZPsijicHall.lua

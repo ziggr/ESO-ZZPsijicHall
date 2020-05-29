@@ -3,8 +3,10 @@ ZZPsijicHall.name       = "ZZPsijicHall"
 ZZPsijicHall.saved_var_version = 2
 ZZPsijicHall.default    = {}
 
-local Item = ZZPsijicHall.Item
-local Item = ZZPsijicHall.Log
+local Cartesian = ZZPsijicHall.Cartesian
+local Item      = ZZPsijicHall.Item
+local Log       = ZZPsijicHall.Log
+local Polar     = ZZPsijicHall.Polar
 
 function ZZPsijicHall.ErrorIfNotHome()
     local okay = {
@@ -117,10 +119,6 @@ end
 
 -- Use positions from script/parser ------------------------------------------
 
-local function zzerror(s)
-    d("|cFF3333ZZPsijicHall error: "..s.."|r")
-end
-
 local function id4(unique_id)
     return unique_id:sub(#unique_id - 3)
 end
@@ -139,12 +137,15 @@ end
 function ZZPsijicHall.MaybeMoveOne2(args)
     local item = ZZPsijicHall.unique_id_to_item[args.unique_id]
     if not item then
-        return zzerror(string.format("missing furniture unique_id:'%s'  %s %d"
-                    , args.unique_id, args.station, args.station_index or 0))
+        Log.Error( "missing furniture unique_id:'%s'  %s %d"
+                      , args.unique_id, args.station
+                      , args.station_index or 0)
+        return
     end
     if item.moved then
-        return zzerror(string.format("furniture moved twice: %s"
-                                    , Id64ToString(args.unique_id)))
+        Log.Error( "furniture moved twice: %s"
+                 , Id64ToString(args.unique_id))
+        return
     end
 
                         -- Already in position? Nothing to do.
@@ -308,11 +309,22 @@ function ZZPsijicHall.RegisterSlashCommands()
     sub_scan:AddAlias("scan")
     sub_scan:SetCallback(function() ZZPsijicHall.SlashCommand("scan") end)
     sub_scan:SetDescription("scan furnishings for crafting stations and platforms")
+
+    local sub_plat = cmd:RegisterSubCommand()
+    sub_plat:AddAlias("plat")
+    sub_plat:SetCallback(function() ZZPsijicHall.SlashCommand("plat") end)
+    sub_plat:SetDescription("move platforms")
+
 end
 
 function ZZPsijicHall.SlashCommand(arg1)
     if arg1:lower() == "scan" then
         ZZPsijicHall.ScanNow()
+    elseif arg1:lower() == "plat" then
+        ZZPsijicHall.ScanNow()
+        local move_list = ZZPsijicHall.CalcPlatforms()
+        ZZPsijicHall.zz = { move_list = move_list }
+        -- ZZPsijicHall.MoveList(move_list)
     end
 end
 
