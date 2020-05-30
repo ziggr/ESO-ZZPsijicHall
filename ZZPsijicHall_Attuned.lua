@@ -55,27 +55,31 @@ function ZZPsijicHall.CalcAttunedStations()
         table.sort(item_list, function(a,b) return a:ItemName() < b:ItemName() end )
     end
 
+    -- 2-N arcs of attuned crafting tables.
+    local move_list = {}
+    local function one_arc(args)
+        for crafting_index, offsets in ipairs(args_by_crafting_type) do
+            args.radius      = args.radius_orig     + offsets.radius_offset
+            args.rot_offset  = args.rot_offset_orig + offsets.rot_offset
+            args.item_list   = attuned_by_crafting_type[crafting_index]
+            args.debug_name  = args.debug_name_orig .. tostring(crafting_index)
+            local ml = ZZPsijicHall.CalcArc(args)
+            ZZPsijicHall.table_iappend(move_list, ml)
+        end
+    end
+
     -- 2. First arc.
     local args = {
         want_ct         = 3
     ,   want_y          = 10620
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = 3600                          -- cm
+    ,   radius_orig     = 3700                          -- cm
     ,   arc_begin       = 39                            -- degrees
     ,   arc_end         = -81                           -- degrees
     ,   rot_offset_orig = 90                            -- degrees
-    ,   item_list       = attuned_by_crafting_type[1]
     ,   debug_name_orig = "attuned 1."
     }
-    local move_list = {}
-    for crafting_index, offsets in ipairs(args_by_crafting_type) do
-        args.radius      = args.radius_orig     + offsets.radius_offset
-        args.rot_offset  = args.rot_offset_orig + offsets.rot_offset
-        args.item_list   = attuned_by_crafting_type[crafting_index]
-        args.debug_name  = args.debug_name_orig .. tostring(crafting_index)
-        local ml = ZZPsijicHall.CalcArc(args)
-        ZZPsijicHall.table_iappend(move_list, ml)
-    end
+    one_arc(args)
 
     return move_list
 end
