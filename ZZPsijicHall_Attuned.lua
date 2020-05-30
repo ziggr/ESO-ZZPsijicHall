@@ -5,11 +5,7 @@ local Cartesian = ZZPsijicHall.Cartesian
 local Polar = ZZPsijicHall.Polar
 
 if not ZZ then
-    ZZ = { R = 4800
-         , O = { x = 79680, z = 62940 }
-         , A = { 39, -81 }
-         , Y = 10620
-         }
+    ZZ = {}
 end
 
 
@@ -33,13 +29,13 @@ function ZZPsijicHall.CalcAttunedStations()
         { radius_offset = 0           -- BS
         , rot_offset    = 0
         }
-    ,   { radius_offset = 175         -- CL
+    ,   { radius_offset = 165         -- CL
         , rot_offset    = 0
         }
-    ,   { radius_offset = 400         -- JW
+    ,   { radius_offset = 380         -- JW
         , rot_offset    = 0
         }
-    ,   { radius_offset = 650         -- WW
+    ,   { radius_offset = 630         -- WW
         , rot_offset    = 0
         }
     }
@@ -68,18 +64,61 @@ function ZZPsijicHall.CalcAttunedStations()
         end
     end
 
-    -- 2. First arc.
+    -- 2. First arc: patio on house side of collonade.
+    --    8 sets down, 51 to go.
+    --
+    --    Plenty more room to widen arc_begin/arc_end, but it's also nice
+    --    visually to limit the stations to the collodade's own
+    --    -100 to 60 degree arc.
+    --
+    --    want_y: the patio here is lumpy and many stations end up floating
+    --            or buried. Will have to hand-fix them after running this.
+    --
+    --    Stations per arc degree: at a radius of 950, the BS stations still
+    --    work at ~15° step. It's a bit tight and cluttered, but oh well.
+    --
+    --    Probably want to split this arc into two bits to clear a walkway
+    --    to the center. arcs = [60,-5] and [-35,-100], 4 sets each side.
+    --
     local args = {
-        want_ct         = 3
-    ,   want_y          = 10620
+        want_ct         = 3 --4
+    ,   want_y          = 10672
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = 3700                          -- cm
-    ,   arc_begin       = 39                            -- degrees
-    ,   arc_end         = -81                           -- degrees
+    ,   radius_orig     =  950                  -- cm
+    ,   arc_begin       =   60                  -- degrees
+    ,   arc_end         =   -5                  -- degrees
+    ,   rot_offset_orig =   90                  -- degrees
+    ,   debug_name_orig = "attuned 2a."
+    }
+-- one_arc(args)
+    args.arc_begin = -35
+    args.arc_end   = -100
+    args.debug_name_orig = "attuned 2b."
+-- one_arc(args)
+
+    -- 3. Second arc: within the collonade itself.
+    --    +18 stations.
+    --    26 down, 33 to go.
+    --
+    --    Must split into two arcs to leave room for the entrance portal.
+    --    arcs = [60,0] [-40,-100]
+    --
+    --    7.5° step works here. So 9 stations per 60°
+    --
+    args = {
+        want_ct         = 3 --9
+    ,   want_y          = 10660
+    ,   origin          = Cartesian:New(79680, 62940)   -- cm
+    ,   radius_orig     = ZZ.R or 2200                  -- cm
+    ,   arc_begin       = ZZ.A or   60                  -- degrees
+    ,   arc_end         = ZZ.B or    0                  -- degrees
     ,   rot_offset_orig = 90                            -- degrees
-    ,   debug_name_orig = "attuned 1."
+    ,   debug_name_orig = "attuned 3a."
     }
     one_arc(args)
+    args.arc_begin = -40
+    args.arg_end   = -100
+    args.debug_name_orig = "attuned 3b."
 
     return move_list
 end
