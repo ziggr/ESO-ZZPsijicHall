@@ -74,9 +74,25 @@ end
 -- move furniture ------------------------------------------------------------
 
 function ZZPsijicHall.MoveList(move_list)
-    for _, item in ipairs(move_list) do
+    ZZPsijicHall.move_queue = move_list
+    ZZPsijicHall.MoveSome()
+end
+
+function ZZPsijicHall.MoveSome()
+    local MAX_MOVES_PER_CHUNK = 10
+    local SLEEP_PER_CHUNK     = 200 -- ms
+
+    for i = 1,MAX_MOVES_PER_CHUNK do
+        local item = table.remove(ZZPsijicHall.move_queue)
+        if not item then
+            Log.Info("Done")
+            return
+        end
+
         ZZPsijicHall.MaybeMove(item)
     end
+
+    zo_callLater(ZZPsijicHall.MoveSome, SLEEP_PER_CHUNK)
 end
 
 -- close enough, don't waste time moving.

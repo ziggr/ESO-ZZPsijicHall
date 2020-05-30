@@ -40,6 +40,23 @@ function ZZPsijicHall.CalcAttunedStations()
         }
     }
 
+                        -- If you want to alternate arcs and have
+                        -- the stations in WW JW CL BS order.
+    local args_by_crafting_type2 = {
+        { radius_offset = 630         -- BS
+        , rot_offset    = 180
+        }
+    ,   { radius_offset = 380         -- CL
+        , rot_offset    = 180
+        }
+    ,   { radius_offset = 165         -- JW
+        , rot_offset    = 180
+        }
+    ,   { radius_offset = 0           -- WW
+        , rot_offset    = 180
+        }
+    }
+
     for _,item in ipairs(ZZPsijicHall.furn_list) do
         for crafting_index,str in ipairs(CRAFTING_TYPE_STRING_LIST) do
             if string.find(item:ItemName(), str) then
@@ -47,14 +64,16 @@ function ZZPsijicHall.CalcAttunedStations()
             end
         end
     end
+                        -- Sort REVERSE alpha so that our pop-from-back
+                        -- operations produce a sequence A-Z not Z-A
     for crafting_index, item_list in ipairs(attuned_by_crafting_type) do
-        table.sort(item_list, function(a,b) return a:ItemName() < b:ItemName() end )
+        table.sort(item_list, function(a,b) return a:ItemName() > b:ItemName() end )
     end
 
     -- 2-N arcs of attuned crafting tables.
     local move_list = {}
-    local function one_arc(args)
-        for crafting_index, offsets in ipairs(args_by_crafting_type) do
+    local function one_arc(args, by_crafting_type)
+        for crafting_index, offsets in ipairs(by_crafting_type) do
             args.radius      = args.radius_orig     + offsets.radius_offset
             args.rot_offset  = args.rot_offset_orig + offsets.rot_offset
             args.item_list   = attuned_by_crafting_type[crafting_index]
@@ -91,11 +110,11 @@ function ZZPsijicHall.CalcAttunedStations()
     ,   rot_offset_orig =   90                  -- degrees
     ,   debug_name_orig = "attuned 2a."
     }
--- one_arc(args)
+-- one_arc(args, args_by_crafting_type)
     args.arc_begin = -35
     args.arc_end   = -100
     args.debug_name_orig = "attuned 2b."
--- one_arc(args)
+-- one_arc(args, args_by_crafting_type)
 
     -- 3. Second arc: within the collonade itself.
     --    +18 stations.
@@ -110,18 +129,18 @@ function ZZPsijicHall.CalcAttunedStations()
         want_ct         = 3 --9
     ,   want_y          = 10660
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = ZZ.R or 2200                  -- cm
-    ,   arc_begin       = ZZ.A or   60                  -- degrees
-    ,   arc_end         = ZZ.B or    0                  -- degrees
+    ,   radius_orig     = 2200                  -- cm
+    ,   arc_begin       =   60                  -- degrees
+    ,   arc_end         =    0                  -- degrees
     ,   rot_offset_orig = 90                            -- degrees
     ,   debug_name_orig = "attuned 3a."
     }
--- one_arc(args)
+-- one_arc(args, args_by_crafting_type)
     args.radius_orig    = 2100
     args.arc_begin      =  -40
     args.arc_end        = -100
     args.debug_name_orig = "attuned 3b."
--- one_arc(args)
+-- one_arc(args, args_by_crafting_type)
 
     -- 4. Third arc: on platforms just outside collonade
     --    27 stations.
@@ -130,16 +149,16 @@ function ZZPsijicHall.CalcAttunedStations()
     --    5° step works here. So 27 stations per 130°
     --
     args = {
-        want_ct         = 3 --9
+        want_ct         = 27
     ,   want_y          = 10621
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = ZZ.R or 3300                  -- cm
-    ,   arc_begin       = ZZ.A or   45                  -- degrees
-    ,   arc_end         = ZZ.B or  -87                  -- degrees
-    ,   rot_offset_orig = 90                            -- degrees
+    ,   radius_orig     = 3300                  -- cm
+    ,   arc_begin       =  -87                  -- degrees
+    ,   arc_end         =   45                  -- degrees
+    ,   rot_offset_orig =   90                  -- degrees
     ,   debug_name_orig = "attuned 4."
     }
-    -- one_arc(args)
+    one_arc(args, args_by_crafting_type)
 
     -- 5. Fourth arc: on platforms outside collonade near water
     --    30 stations.
@@ -148,16 +167,16 @@ function ZZPsijicHall.CalcAttunedStations()
     --    4° step works here. So 30 stations per 120°
     --
     args = {
-        want_ct         = 3 --9
+        want_ct         = 32
     ,   want_y          = 10621
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = ZZ.R or 4500                  -- cm
-    ,   arc_begin       = ZZ.A or   40                  -- degrees
-    ,   arc_end         = ZZ.B or  -82                  -- degrees
-    ,   rot_offset_orig = 90                            -- degrees
+    ,   radius_orig     = 4500                  -- cm
+    ,   arc_begin       =   40                  -- degrees
+    ,   arc_end         =  -82                  -- degrees
+    ,   rot_offset_orig =   90                  -- degrees
     ,   debug_name_orig = "attuned 5."
     }
-    one_arc(args)
+    one_arc(args, args_by_crafting_type2)
 
     return move_list
 end
