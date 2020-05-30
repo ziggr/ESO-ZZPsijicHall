@@ -43,13 +43,13 @@ function ZZPsijicHall.CalcAttunedStations()
                         -- If you want to alternate arcs and have
                         -- the stations in WW JW CL BS order.
     local args_by_crafting_type2 = {
-        { radius_offset = 630         -- BS
+        { radius_offset = 650         -- BS
         , rot_offset    = 180
         }
-    ,   { radius_offset = 380         -- CL
+    ,   { radius_offset = 455         -- CL
         , rot_offset    = 180
         }
-    ,   { radius_offset = 165         -- JW
+    ,   { radius_offset = 250         -- JW
         , rot_offset    = 180
         }
     ,   { radius_offset = 0           -- WW
@@ -75,7 +75,7 @@ function ZZPsijicHall.CalcAttunedStations()
     local function one_arc(args, by_crafting_type)
         for crafting_index, offsets in ipairs(by_crafting_type) do
             args.radius      = args.radius_orig     + offsets.radius_offset
-            args.rot_offset  = args.rot_offset_orig + offsets.rot_offset
+            args.rot_offset  = 90 + offsets.rot_offset
             args.item_list   = attuned_by_crafting_type[crafting_index]
             args.debug_name  = args.debug_name_orig .. tostring(crafting_index)
             local ml = ZZPsijicHall.CalcArc(args)
@@ -107,7 +107,6 @@ function ZZPsijicHall.CalcAttunedStations()
     ,   radius_orig     =  950                  -- cm
     ,   arc_begin       =   60                  -- degrees
     ,   arc_end         =   -5                  -- degrees
-    ,   rot_offset_orig =   90                  -- degrees
     ,   debug_name_orig = "attuned 2a."
     }
 -- one_arc(args, args_by_crafting_type)
@@ -132,7 +131,6 @@ function ZZPsijicHall.CalcAttunedStations()
     ,   radius_orig     = 2200                  -- cm
     ,   arc_begin       =   60                  -- degrees
     ,   arc_end         =    0                  -- degrees
-    ,   rot_offset_orig = 90                            -- degrees
     ,   debug_name_orig = "attuned 3a."
     }
 -- one_arc(args, args_by_crafting_type)
@@ -153,9 +151,8 @@ function ZZPsijicHall.CalcAttunedStations()
     ,   want_y          = 10621
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
     ,   radius_orig     = 3300                  -- cm
-    ,   arc_begin       =  -87                  -- degrees
-    ,   arc_end         =   45                  -- degrees
-    ,   rot_offset_orig =   90                  -- degrees
+    ,   arc_begin       =   45                  -- degrees
+    ,   arc_end         =  -87                  -- degrees
     ,   debug_name_orig = "attuned 4."
     }
     one_arc(args, args_by_crafting_type)
@@ -171,9 +168,8 @@ function ZZPsijicHall.CalcAttunedStations()
     ,   want_y          = 10621
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
     ,   radius_orig     = 4500                  -- cm
-    ,   arc_begin       =   40                  -- degrees
-    ,   arc_end         =  -82                  -- degrees
-    ,   rot_offset_orig =   90                  -- degrees
+    ,   arc_begin       =  -82                  -- degrees
+    ,   arc_end         =   40                  -- degrees
     ,   debug_name_orig = "attuned 5."
     }
     one_arc(args, args_by_crafting_type2)
