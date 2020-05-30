@@ -90,7 +90,7 @@ function ZZPsijicHall.MaybeMove(item)
             and (item.y == item.want.y)
             and (   (not ZZPsijicHall.force_rotation)
                  or equ(item.rotation_rads, item.want.rotation_rads)) then
-        Log.Info( "Skipping: already in position x:%d,z:%d  %s|r"
+        Log.Info( "Skipping: already in position x:%d,z:%d  %s"
                 , item.x
                 , item.z
                 , item:ItemName())
