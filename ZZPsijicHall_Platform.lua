@@ -6,7 +6,7 @@ local Polar = ZZPsijicHall.Polar
 
 ZZ = nil
 if not ZZ then
-    ZZ = { R = 3600
+    ZZ = { R = 4800
          , O = { x = 79680, z = 62940 }
          , A = { 39, -81 }
          , Y = 10620
@@ -34,17 +34,33 @@ function ZZPsijicHall.CalcPlatforms()
     -- 2. First arc
     local args = {
         want_ct     = 8
-    ,   want_y      = ZZ.Y or 10620
-    ,   origin      = ZZ.O or Cartesian:New(79680, 62940)   -- cm
-    ,   radius      = ZZ.R or 3600                          -- cm
-    ,   arc_begin   = ZZ.A[1] or 39        -- degrees
-    ,   arc_end     = ZZ.A[2] or -81       -- degrees
+    ,   want_y      = 10620
+    ,   origin      = Cartesian:New(79680, 62940)   -- cm
+    ,   radius      = 3600                          -- cm
+    ,   arc_begin   = 39        -- degrees
+    ,   arc_end     = -81       -- degrees
     ,   rot_offset  = 0                    -- degrees
     ,   item_list   = item_list
     ,   debug_name  = "platform 1"
     }
+    local platform_list = ZZPsijicHall.CalcArc(args)
 
-    return ZZPsijicHall.CalcArc(args)
+    -- 3. Second arc
+    local args = {
+        want_ct     = 11
+    ,   want_y      = 10618
+    ,   origin      = Cartesian:New(79680, 62940)   -- cm
+    ,   radius      = 4850                          -- cm
+    ,   arc_begin   = 38        -- degrees
+    ,   arc_end     = -81       -- degrees
+    ,   rot_offset  = 0                    -- degrees
+    ,   item_list   = item_list
+    ,   debug_name  = "platform 2"
+    }
+    local pl2 = ZZPsijicHall.CalcArc(args)
+    for _,item in ipairs(pl2) do table.insert(platform_list, item) end
+
+    return platform_list
 end
 
 function ZZPsijicHall.CalcArc(args)
@@ -71,7 +87,8 @@ function ZZPsijicHall.CalcArc(args)
         if not item then
             Log.Error( "Not enough items. Wanted %d got %d: %s"
                      , args.want_ct
-                     , #move_list )
+                     , #move_list
+                     , args.deg2rad )
             return nil
         end
 
