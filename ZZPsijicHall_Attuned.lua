@@ -60,6 +60,7 @@ function ZZPsijicHall.CalcAttunedStations()
             args.item_list   = attuned_by_crafting_type[crafting_index]
             args.debug_name  = args.debug_name_orig .. tostring(crafting_index)
             local ml = ZZPsijicHall.CalcArc(args)
+            ZZ.args = args -- zum Debuggen
             ZZPsijicHall.table_iappend(move_list, ml)
         end
     end
@@ -115,10 +116,48 @@ function ZZPsijicHall.CalcAttunedStations()
     ,   rot_offset_orig = 90                            -- degrees
     ,   debug_name_orig = "attuned 3a."
     }
-    one_arc(args)
-    args.arc_begin = -40
-    args.arg_end   = -100
+-- one_arc(args)
+    args.radius_orig    = 2100
+    args.arc_begin      =  -40
+    args.arc_end        = -100
     args.debug_name_orig = "attuned 3b."
+-- one_arc(args)
+
+    -- 4. Third arc: on platforms just outside collonade
+    --    27 stations.
+    --    53 down, 6 to go.
+    --
+    --    5° step works here. So 27 stations per 130°
+    --
+    args = {
+        want_ct         = 3 --9
+    ,   want_y          = 10621
+    ,   origin          = Cartesian:New(79680, 62940)   -- cm
+    ,   radius_orig     = ZZ.R or 3300                  -- cm
+    ,   arc_begin       = ZZ.A or   45                  -- degrees
+    ,   arc_end         = ZZ.B or  -87                  -- degrees
+    ,   rot_offset_orig = 90                            -- degrees
+    ,   debug_name_orig = "attuned 4."
+    }
+    -- one_arc(args)
+
+    -- 5. Fourth arc: on platforms outside collonade near water
+    --    30 stations.
+    --    53 down, 6 to go.
+    --
+    --    4° step works here. So 30 stations per 120°
+    --
+    args = {
+        want_ct         = 3 --9
+    ,   want_y          = 10621
+    ,   origin          = Cartesian:New(79680, 62940)   -- cm
+    ,   radius_orig     = ZZ.R or 4500                  -- cm
+    ,   arc_begin       = ZZ.A or   40                  -- degrees
+    ,   arc_end         = ZZ.B or  -82                  -- degrees
+    ,   rot_offset_orig = 90                            -- degrees
+    ,   debug_name_orig = "attuned 5."
+    }
+    one_arc(args)
 
     return move_list
 end
