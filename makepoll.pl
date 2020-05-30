@@ -18,8 +18,9 @@ sub dirls($)
 
 @files = ( 'Makefile' );
 # push @files, dirls('src');
+push @files, 'ZZPsijicHall.txt';
 push @files, 'ZZPsijicHall.lua';
-push @files, 'ZZPsijicHall.lua';
+push @files, 'ZZPsijicHall_Attuned.lua';
 push @files, 'ZZPsijicHall_Coord.lua';
 push @files, 'ZZPsijicHall_Geometry.lua';
 push @files, 'ZZPsijicHall_Item.lua';

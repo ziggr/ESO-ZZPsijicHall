@@ -50,10 +50,10 @@ function ZZPsijicHall.ScanNow()
     ZZPsijicHall.furn_list                = furn_list
     ZZPsijicHall.unique_id_to_item        = unique_id_to_item
     ZZPsijicHall.saved_vars.furn_list_out = furn_list_out
-    ZZPsijicHall.Log.Info(
-              "Scanning done. %d furnishings scanned, %d interesting ones."
-            , seen_ct
-            , #furn_list )
+    -- ZZPsijicHall.Log.Info(
+    --           "Scanning done. %d furnishings scanned, %d interesting ones."
+    --         , seen_ct
+    --         , #furn_list )
 end
 
 function ZZPsijicHall.IsInteresting(item)
@@ -353,6 +353,10 @@ function ZZPsijicHall.RegisterSlashCommands()
     sub_plat:SetCallback(function() ZZPsijicHall.SlashCommand("plat") end)
     sub_plat:SetDescription("move platforms")
 
+    local sub_tune = cmd:RegisterSubCommand()
+    sub_tune:AddAlias("tune")
+    sub_tune:SetCallback(function() ZZPsijicHall.SlashCommand("tune") end)
+    sub_tune:SetDescription("move attuned stations")
 end
 
 function ZZPsijicHall.SlashCommand(arg1)
@@ -361,7 +365,11 @@ function ZZPsijicHall.SlashCommand(arg1)
     elseif arg1:lower() == "plat" then
         ZZPsijicHall.ScanNow()
         local move_list = ZZPsijicHall.CalcPlatforms()
-        ZZPsijicHall.zz = { platforms = move_list }
+        ZZPsijicHall.MoveList(move_list)
+    elseif arg1:lower() == "tune" then
+        ZZPsijicHall.ScanNow()
+        local move_list = ZZPsijicHall.CalcAttunedStations()
+        ZZPsijicHall.move_list = move_list
         ZZPsijicHall.MoveList(move_list)
     end
 end

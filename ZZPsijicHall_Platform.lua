@@ -2,15 +2,12 @@ local ZZPsijicHall = _G["ZZPsijicHall"]
 
 local Log = ZZPsijicHall.Log
 local Cartesian = ZZPsijicHall.Cartesian
-local Polar = ZZPsijicHall.Polar
 
-ZZ = nil
-if not ZZ then
-    ZZ = { R = 4800
-         , O = { x = 79680, z = 62940 }
-         , A = { 39, -81 }
-         , Y = 10620
-         }
+function ZZPsijicHall.table_iappend(a,b)
+    for _,x in ipairs(b) do
+        table.insert(a,x)
+    end
+    return a
 end
 
 -- Return a list of Item/Cartesian/rotation rows
@@ -58,7 +55,7 @@ function ZZPsijicHall.CalcPlatforms()
     ,   debug_name  = "platform 2"
     }
     local pl2 = ZZPsijicHall.CalcArc(args)
-    for _,item in ipairs(pl2) do table.insert(platform_list, item) end
+    ZZPsijicHall.table_iappend(platform_list, pl2)
 
     return platform_list
 end
