@@ -57,6 +57,22 @@ function ZZPsijicHall.CalcPlatforms()
     local pl2 = ZZPsijicHall.CalcArc(args)
     ZZPsijicHall.table_iappend(platform_list, pl2)
 
+    -- 4. Third arc
+    local args = {
+        want_ct     = 12
+    ,   want_y      = 10616
+    ,   origin      = Cartesian:New(79680, 62940)   -- cm
+    ,   radius      = 6000                          -- cm
+    ,   arc_begin   = 38        -- degrees
+    ,   arc_end     = -81       -- degrees
+    ,   rot_offset  = 0                    -- degrees
+    ,   item_list   = item_list
+    ,   debug_name  = "platform 3"
+    }
+    local pl3 = ZZPsijicHall.CalcArc(args)
+    ZZPsijicHall.table_iappend(platform_list, pl3)
+
+
     return platform_list
 end
 

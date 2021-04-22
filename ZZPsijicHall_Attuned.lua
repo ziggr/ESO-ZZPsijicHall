@@ -146,18 +146,38 @@ function ZZPsijicHall.CalcAttunedStations()
     --
     --    5° step works here. So 27 stations per 130°
     --
+    -- 3300cm radius is fine, but places BS stations so close
+    -- to collonade that you cannot run along the BS/collonade.
+    --
     args = {
         want_ct         = 27
     ,   want_y          = 10621
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = 3300                  -- cm
+    ,   radius_orig     = 3400                  -- cm
     ,   arc_begin       =   45                  -- degrees
     ,   arc_end         =  -87                  -- degrees
     ,   debug_name_orig = "attuned 4."
     }
-    one_arc(args, args_by_crafting_type)
+    -- one_arc(args, args_by_crafting_type)
 
     -- 5. Fourth arc: on platforms outside collonade near water
+    --    30 stations. Middle arc
+    --    53 down, 6 to go.
+    --
+    --    4° step works here. So 30 stations per 120°
+    --
+    args = {
+        want_ct         = 30
+    ,   want_y          = 10621
+    ,   origin          = Cartesian:New(79680, 62940)   -- cm
+    ,   radius_orig     = 4500                  -- cm
+    ,   arc_begin       =   40                  -- degrees
+    ,   arc_end         =  -82                  -- degrees
+    ,   debug_name_orig = "attuned 5."
+    }
+    one_arc(args, args_by_crafting_type)
+
+    -- 6. Fifth arc: on platforms outside collonade near water
     --    30 stations.
     --    53 down, 6 to go.
     --
@@ -167,10 +187,10 @@ function ZZPsijicHall.CalcAttunedStations()
         want_ct         = 32
     ,   want_y          = 10621
     ,   origin          = Cartesian:New(79680, 62940)   -- cm
-    ,   radius_orig     = 4500                  -- cm
+    ,   radius_orig     = 5600                  -- cm
     ,   arc_begin       =  -82                  -- degrees
     ,   arc_end         =   40                  -- degrees
-    ,   debug_name_orig = "attuned 5."
+    ,   debug_name_orig = "attuned 6."
     }
     one_arc(args, args_by_crafting_type2)
 
